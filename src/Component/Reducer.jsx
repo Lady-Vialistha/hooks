@@ -4,10 +4,13 @@ import { Input, Button, Container } from "reactstrap";
 import { v4 as uuidv4 } from "uuid";
 
 function TodolistReducer() {
-  const [state, setState] = useState({
-    id: null,
-    taskname: String,
-  });
+  //   const [state, setState] = useState({
+  //     id: null,
+  //     taskname: String,
+  //   });
+  const [state, setState] = useState([]);
+  const [taskname, setTaskname] = useState("");
+  const [id, setId] = useState(null);
 
   function reducerFn(state, action) {
     switch (action.type) {
@@ -25,21 +28,18 @@ function TodolistReducer() {
         break;
     }
   }
-  const [task, dispatch] = useReducer(reducerFn, []);
+  const [task, dispatch] = useReducer(reducerFn, state);
+  console.log("task", state);
 
   function handleAddTask() {
-    console.log("state id", state.taskname);
-    const { taskname } = state;
+    const res = state.push({ taskname: taskname });
     if (taskname === "") {
       alert("empty");
       return;
     }
     dispatch({
       type: "ADD_TASK",
-      data: { id: uuidv4(), taskname },
-    });
-    setState({
-      taskname: String,
+      data: { id: uuidv4(), res },
     });
   }
 
@@ -51,18 +51,14 @@ function TodolistReducer() {
   }
 
   function handleUpdateTask() {
-    const { taskname } = state;
     dispatch({
       type: "UPDATE_TASK",
-      data: { id: state.id, taskname },
-    });
-    setState({
-      taskname: String,
+      data: { id: id, taskname },
     });
   }
 
   function startUpdateTask(id) {
-    setState({ ...task.filter((task) => task.id === id)[0], id });
+    setState({ ...task.filter((task) => task === id)[0], id });
   }
 
   function handleChange(e) {
@@ -81,7 +77,7 @@ function TodolistReducer() {
           color="info"
           outline
           className="button-list"
-          onClick={state.id ? handleUpdateTask : handleAddTask}
+          onClick={id ? handleUpdateTask : handleAddTask}
         >
           {state.id ? "Save task" : "Add task"}
         </Button>
